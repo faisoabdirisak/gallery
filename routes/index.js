@@ -8,14 +8,18 @@ let Image = require('../models/images');
 
 var db = []
 
-router.get('/', (req,res)=>{
-    
-    Image.find({}, function(err, images){
-        // console.log(images)
-        if (err) console.log(err);
-        res.render('index',{images:images, msg: req.query.msg })
-    })
-})
+// Route for the homepage
+router.get('/', async (req, res) => {
+    try {
+        // Fetch images from the database
+        const images = await Image.find(); 
+        res.render('index', { images }); // Pass the images array to the EJS template
+    } catch (err) {
+        console.error('Error fetching images:', err);
+        res.render('index', { images: [] }); // Pass an empty array if an error occurs
+    }
+});
+
 
 router.post('/upload', (req, res)=>{
     upload(req,res, (err)=>{
