@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     triggers {
-        pollSCM('H/1 * * * *') // Poll repository every 5 minutes
+        pollSCM('H/1 * * * *') // Poll repository every 1 minutes
     }
 
     stages {
-        stage('Clone Repository'){
+        stage('Clone Repository') {
             steps{
                 git branch:'master', url:'https://github.com/faisoabdirisak/gallery.git'
             }
@@ -24,9 +24,19 @@ pipeline {
                 sh 'npm install'
             }
         }
-
+        stage('Run Tests') {
+            steps {
+                sh 'npm test'
+            }
+            post {
+                failure {
+                    mail to: 'faiso.abdirisak@student.moringaschool.com',
+                        subject: "Build Failed",
+                        body: "Tests failed for job. Check Jenkins for details."
+                }
+            }
+        }
 
     }
 
-      
 }
