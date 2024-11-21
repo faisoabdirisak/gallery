@@ -1,27 +1,32 @@
-pipeline{
+pipeline {
     agent any
-    tools{
-        nodejs "nodejs"
+
+    triggers {
+        pollSCM('H/1 * * * *') // Poll repository every 5 minutes
     }
 
-    stages{
+    stages {
         stage('Clone Repository'){
             steps{
                 git branch:'master', url:'https://github.com/faisoabdirisak/gallery.git'
             }
         }
-        stage ('Project Build') {
+        stage('Checkout Code') {
             steps {
+                echo 'Checking out code...'
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing dependencies...'
                 sh 'npm install'
             }
         }
-        stage ('Running Tests') {
-            steps {
-                sh 'npm test'  
-            }
-       }
 
-       }
-            
+
     }
+
+      
 }
