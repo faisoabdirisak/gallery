@@ -24,18 +24,18 @@ pipeline {
                 sh 'npm install'
             }
         }
-        // stage('Run Tests') {
-        //     steps {
-        //         sh 'npm test'
-        //     }
-        //     post {
-        //         failure {
-        //             mail to: 'faiso.abdirisak@student.moringaschool.com',
-        //                 subject: "Build Failed",
-        //                 body: "Tests failed for job. Check Jenkins for details."
-        //         }
-        //     }
-        // }
+        stage('Run Tests') {
+            steps {
+                sh 'npm test'
+            }
+            post {
+                failure {
+                    mail to: 'faiso.abdirisak@student.moringaschool.com',
+                        subject: "Build Failed",
+                        body: "Tests failed for job. Check Jenkins for details."
+                }
+            }
+        }
 
     }
 
