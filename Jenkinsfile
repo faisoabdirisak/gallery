@@ -7,7 +7,7 @@ pipeline {
 
     stages {
         stage('Clone Repository') {
-            steps{
+            steps {
                 git branch:'master', url:'https://github.com/faisoabdirisak/gallery.git'
             }
         }
@@ -31,12 +31,23 @@ pipeline {
             post {
                 failure {
                     mail to: 'faiso.abdirisak@student.moringaschool.com',
-                        subject: "Build Failed",
-                        body: "Tests failed for job. Check Jenkins for details."
+                        subject: 'Build Failed',
+                        body: 'Tests failed for job. Check Jenkins for details.'
                 }
             }
         }
-
+        stage('Deploy to Heroku') {
+            steps {
+                withCredentials([usernameColonPassword(credentialsId: 'heroku', variable: 'HEROKU_CREDENTIALS')])
+                {
+                    sh 'git push https://${HEROKU_CREDENTIALS}@git.heroku.com/gallery-devops.git master'
+                }
+            }
+            post {
+                always {
+                    slackSend color: 'good', message:  "Deployed ${BUILD_ID}", attachments: "Deployed Link 'https://gallery-devs-697f69a08750.herokuapp.com/"
+                }
+            }
+        }
     }
-
 }
