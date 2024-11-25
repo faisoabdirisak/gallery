@@ -11,12 +11,7 @@ pipeline {
                 git branch:'master', url:'https://github.com/faisoabdirisak/gallery.git'
             }
         }
-        stage('Checkout Code') {
-            steps {
-                echo 'Checking out code...'
-                checkout scm
-            }
-        }
+       
 
         stage('Install Dependencies') {
             steps {
@@ -30,9 +25,18 @@ pipeline {
             }
             post {
                 failure {
-                    mail to: 'faiso.abdirisak@student.moringaschool.com',
-                        subject: 'Build Failed',
-                        body: 'Tests failed for job. Check Jenkins for details.'
+                     emailext attachLog: true, 
+                        body:
+                            """
+                            <p>EXECUTED: Job <b>\'${env.JOB_NAME}:${env.BUILD_NUMBER})\'</b></p>
+                            <p>
+                            View console output at 
+                            "<a href="${env.BUILD_URL}">${env.JOB_NAME}:${env.BUILD_NUMBER}</a>"
+                            </p> 
+                              <p><i>(Build log is attached.)</i></p>
+                            """,
+                        subject: "Status: FAILURE -Job \'${env.JOB_NAME}:${env.BUILD_NUMBER}\'", 
+                        to: 'faisoabdirisak@gmail.com'
                 }
             }
         }
